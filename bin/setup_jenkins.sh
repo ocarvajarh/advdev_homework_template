@@ -13,13 +13,19 @@ CLUSTER=$3
 echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cluster ${CLUSTER}"
 
 # Set up Jenkins with sufficient resources
-# TBD
+echo "Creating Jenkins instance with persistent storage"
+oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi --param DISABLE_ADMINISTRATIVE_MONITORS=true -n ${GUID}-jenkins
 
 # Create custom agent container image with skopeo
-# TBD
+echo "Creating custom Maven agent"
+oc new-build  -D $'FROM docker.io/openshift/jenkins-agent-maven-35-centos7:v3.11 USER root\nRUN yum -y install skopeo && yum clean all USER 1001' --name=jenkins-agent-appdev -n ${GUID}-jenkins
+# oc new-build  -D $'FROM docker.io/openshift/jenkins-slave-maven-centos7:v3.11 USER root\nRUN yum -y install skopeo && yum clean all USER 1001' --name=jenkins-agent-appdev -n ${GUID}-jenkins
 
 # Create pipeline build config pointing to the ${REPO} with contextDir `openshift-tasks`
-# TBD
+
+echo "Creating and configuring pipeline"
+oc new-build ${REPO} --name="tasks-pipeline" --strategy=pipeline --context-dir="openshift-tasks" -n $GUID-jenkins
+oc set env bc/tasks-pipeline CLUSTER=${CLUSTER} GUID=${GUID} -n $GUID-jenkins
 
 # Make sure that Jenkins is fully up and running before proceeding!
 while : ; do
@@ -32,3 +38,7 @@ while : ; do
   echo "...no. Sleeping 10 seconds."
   sleep 10
 done
+
+#Delete the empty build created by default
+sleep 10
+oc delete build/tasks-pipeline-1 -n $GUID-jenkins
