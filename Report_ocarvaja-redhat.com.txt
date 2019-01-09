@@ -1,0 +1,25 @@
+Repo: https://github.com/ocarvajarh/advdev_homework_template.git
+Build Number:  294 (Advanced Development Homework Grading)
+
+Homework Assigment Lab 8 hours.
+
+In this POC I execuet the following tasks:
+
+- Jenkins Project Setup
+        - Create a persistent Jenkins
+        - Create a custom agent image (which includes skopeo) to build the pipeline
+
+- Pipeline
+        - Create a Jenkins pipeline for the Tasks application and store it in the source code repository
+        - The pipeline executes the following steps:
+            - Build the source code, using the shared Nexus as a Maven proxy cache
+            - Execute the following tests in parallel:
+                - Unit tests
+                - Code coverage tests using the shared SonarQube instance
+            - Tag the image with the version from the pom.xml and build number
+            - Upload the generated artifact to the shared Nexus artifact repository
+            - Upload the tested container image to the shared Nexus container registry
+        - Deploy the application into the development project
+        - Tags the image as version for production deployment
+        - Deploys the application into the production project using a blue-green strategy
+
