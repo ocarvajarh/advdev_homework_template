@@ -28,6 +28,9 @@ echo "Creating and configuring pipeline"
 oc new-build ${REPO} --name="tasks-pipeline" --strategy=pipeline --context-dir="openshift-tasks" -n $GUID-jenkins
 oc set env bc/tasks-pipeline CLUSTER=${CLUSTER} GUID=${GUID} -n $GUID-jenkins
 
+#Delete the empty build created by default
+oc delete build/tasks-pipeline-1 -n $GUID-jenkins
+
 # Make sure that Jenkins is fully up and running before proceeding!
 while : ; do
   echo "Checking if Jenkins is Ready..."
@@ -39,7 +42,3 @@ while : ; do
   echo "...no. Sleeping 10 seconds."
   sleep 10
 done
-
-#Cancel the empty build created by default
-sleep 10
-oc cancel-build tasks-pipeline-1 -n $GUID-jenkins
