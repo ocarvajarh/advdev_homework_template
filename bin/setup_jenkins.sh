@@ -40,6 +40,6 @@ while : ; do
   sleep 10
 done
 
-#Delete the empty build created by default
+#Cancel the empty build created by default
 sleep 10
-oc delete build/tasks-pipeline-1 -n $GUID-jenkins
+oc cancel-build tasks-pipeline-1 -n $GUID-jenkins
