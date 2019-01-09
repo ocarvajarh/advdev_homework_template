@@ -90,7 +90,7 @@ podTemplate(
         //      Set Image, Set VERSION
         //      Make sure the application is running and ready before proceeding
         sh "oc set image dc/tasks tasks=docker-registry.default.svc:5000/${devProj}/tasks:${devTag} -n ${devProj}"
-        sh "oc set env dc/tasks VERSION='${devTag} (tasks-dev)'"
+        sh "oc set env -n ${devProj} dc/tasks VERSION='${devTag} (tasks-dev)'"
 
         sh "oc delete configmap tasks-config -n ${devProj} --ignore-not-found=true"
         sh "oc create configmap tasks-config --from-file=./configuration/application-users.properties --from-file=./configuration/application-roles.properties -n ${devProj}"
@@ -128,7 +128,7 @@ podTemplate(
         //      Set Image, Set VERSION
         echo "Set Image, Set VERSION"
         sh "oc set image dc/${destApp} ${destApp}=docker-registry.default.svc:5000/${devProj}/tasks:${prodTag} -n ${prodProj}"
-        sh "oc set env dc/${destApp} VERSION='${prodTag} (${destApp})'"
+        sh "oc set env -n ${prodProj} dc/${destApp} VERSION='${prodTag} (${destApp})'"
 
         //      Deploy into the other application
 
